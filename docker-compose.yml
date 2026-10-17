@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # Requires a MongoDB deployment with Atlas Search support.
+      MONGODB_URI: ${MONGODB_URI:?Set MONGODB_URI in .env}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?Set ADMIN_USERNAME in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+    restart: unless-stopped
