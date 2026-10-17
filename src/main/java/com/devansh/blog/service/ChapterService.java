@@ -54,4 +54,8 @@ public class ChapterService {
         chapterRepository.save(chapter);
         return buildMetaData(chapter);
     }
+
+    public void deleteChapter(String chapterId){
+        chapterRepository.deleteById(chapterId);
+    }
 }

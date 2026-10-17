@@ -46,4 +46,9 @@ public class BookController {
     public void addChapter(@RequestBody AddChapterRequest addChapterRequest) {
         bookService.addChapterToBook(addChapterRequest.getBookId(), addChapterRequest.getChapterId());
     }
+
+    @DeleteMapping
+    public void deleteBook(@RequestParam String id) {
+        bookService.deleteBook(id);
+    }
 }

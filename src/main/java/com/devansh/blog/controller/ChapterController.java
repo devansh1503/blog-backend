@@ -1,5 +1,6 @@
 package com.devansh.blog.controller;
 
+import com.devansh.blog.dto.AddChapterRequest;
 import com.devansh.blog.dto.ChapterMetaData;
 import com.devansh.blog.dto.ChapterRequest;
 import com.devansh.blog.models.Chapter;
@@ -21,5 +22,10 @@ public class ChapterController {
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
     public ChapterMetaData createOrUpdateChapter(@RequestBody ChapterRequest request) {
         return chapterService.createOrUpdateChapter(request);
+    }
+
+    @DeleteMapping
+    public void deleteChapter(@RequestParam String id) {
+        chapterService.deleteChapter(id);
     }
 }
