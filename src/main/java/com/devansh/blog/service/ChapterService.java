@@ -1,20 +1,28 @@
 package com.devansh.blog.service;
 
+import com.devansh.blog.dto.BookMetaData;
 import com.devansh.blog.dto.ChapterMetaData;
 import com.devansh.blog.dto.ChapterRequest;
+import com.devansh.blog.models.Book;
 import com.devansh.blog.models.Chapter;
 import com.devansh.blog.repository.ChapterRepository;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ChapterService {
     private final ChapterRepository chapterRepository;
+    private final MongoTemplate mongoTemplate;
 
     public Chapter getChapterById(String id) {
         return chapterRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chapter not found"));
@@ -57,5 +65,37 @@ public class ChapterService {
 
     public void deleteChapter(String chapterId){
         chapterRepository.deleteById(chapterId);
+    }
+
+    public List<ChapterMetaData> getAllChapters(){
+        List<Chapter> chapters = chapterRepository.findAll();
+        return chapters.stream().map(this::buildMetaData).toList();
+    }
+
+    public List<ChapterMetaData> searchChapters(String keyword){
+        Document autocomplete = new Document()
+                .append("query", keyword)
+                .append("path", "title")
+                .append("fuzzy", new Document()
+                        .append("maxEdits", 1)
+                        .append("prefixLength", 1)
+                );
+
+        Document searchStage = new Document(
+                "$search",
+                new Document().append("index", "chapter_search").append("autocomplete", autocomplete)
+        );
+
+        AggregationOperation searchOperation = context -> searchStage;
+        Aggregation aggregation = Aggregation.newAggregation(searchOperation, Aggregation.limit(10));
+
+        List<Chapter> chapters = mongoTemplate.aggregate(aggregation, "chapters", Chapter.class).getMappedResults();
+
+        List<ChapterMetaData> chapterMetaDataList = new ArrayList<>();
+        for (Chapter chapter : chapters) {
+            ChapterMetaData chapterMetaData = buildMetaData(chapter);
+            chapterMetaDataList.add(chapterMetaData);
+        }
+        return chapterMetaDataList;
     }
 }

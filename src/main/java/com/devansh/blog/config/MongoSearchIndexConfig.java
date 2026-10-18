@@ -41,7 +41,14 @@ public class MongoSearchIndexConfig {
                 }
                 """);
 
+            if (!mongoTemplate.collectionExists("books")) {
+                mongoTemplate.createCollection("books");
+            }
+            if(!mongoTemplate.collectionExists("chapters")) {
+                mongoTemplate.createCollection("chapters");
+            }
             var collection = mongoTemplate.getCollection("books");
+            var chapterCollection = mongoTemplate.getCollection("chapters");
 
             boolean indexExists = collection
                     .listSearchIndexes()
@@ -51,9 +58,22 @@ public class MongoSearchIndexConfig {
                             "book_search".equals(index.getString("name"))
                     );
 
+            boolean chapterIndexExists = chapterCollection
+                    .listSearchIndexes()
+                    .into(new java.util.ArrayList<>())
+                    .stream()
+                    .anyMatch(index ->
+                            "chapter_search".equals(index.getString("name"))
+                    );
+
             if (!indexExists) {
                 collection.createSearchIndexes(
                         List.of(new SearchIndexModel("book_search", definition))
+                );
+            }
+            if (!chapterIndexExists) {
+                chapterCollection.createSearchIndexes(
+                        List.of(new SearchIndexModel("chapter_search", definition))
                 );
             }
         };
