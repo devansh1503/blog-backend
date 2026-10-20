@@ -7,6 +7,7 @@ import com.devansh.blog.repository.ChapterRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.*;
 class ServiceRegressionTests {
     private final BookRepository books = mock(BookRepository.class);
     private final ChapterRepository chapters = mock(ChapterRepository.class);
-    private final ChapterService chapterService = new ChapterService(chapters);
+    private final ChapterService chapterService = new ChapterService(chapters, mock(MongoTemplate.class));
     private final BookService bookService = new BookService(books, chapterService, null);
 
     @Test

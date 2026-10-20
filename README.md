@@ -1,5 +1,15 @@
 Hi, Devansh this side, here is the structure for this project-
 
+# CORS
+
+Set `CORS_ALLOWED_ORIGINS` to a comma-separated list of frontend origins, for example
+`https://blog.example.com,https://admin.example.com`. Use the scheme, host, and port
+only, with no path or trailing slash. The default is `http://localhost:5173`.
+The global security configuration owns CORS for both controllers and handles
+preflight requests before authentication. Writes still require admin HTTP Basic
+authentication; send the `Authorization` header explicitly. Browser-managed
+credentials (`fetch` with `credentials: 'include'`) are not enabled by this policy.
+
 # Requirements
 * User and Admin seperate flows
 * User must be able to see featured post, paginated view of all posts

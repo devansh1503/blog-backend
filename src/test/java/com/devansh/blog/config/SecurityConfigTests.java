@@ -17,7 +17,8 @@ class SecurityConfigTests {
         try (var context = new AnnotationConfigWebApplicationContext()) {
             context.setServletContext(new MockServletContext());
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(context,
-                    "ADMIN_USERNAME=test-admin", "ADMIN_PASSWORD=test-password");
+                    "ADMIN_USERNAME=test-admin", "ADMIN_PASSWORD=test-password",
+                    "app.cors.allowed-origins=https://reader.example, https://admin.example, ,");
             context.register(SecurityConfig.class);
             context.refresh();
 

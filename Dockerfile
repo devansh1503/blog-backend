@@ -1,4 +1,5 @@
-FROM eclipse-temurin:25-jdk AS build
+FROM eclipse-temurin:21-jdk AS build
+
 WORKDIR /app
 
 COPY .mvn/ .mvn/
@@ -9,7 +10,7 @@ COPY src/ src/
 RUN ./mvnw -B -ntp -DskipTests package \
     && cp target/blog-*.jar /app/app.jar
 
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 RUN groupadd --system app && useradd --system --gid app app

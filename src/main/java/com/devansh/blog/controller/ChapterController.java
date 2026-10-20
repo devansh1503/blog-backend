@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping({"/v1/chapter", "/v1/chapter/"})
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ChapterController {
     private final ChapterService chapterService;
 
