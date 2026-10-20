@@ -33,6 +33,21 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B -ntp clean verify
+          
+
+      - name: Diagnose GitHub OIDC token
+        env:
+          GH_OIDC_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          GH_OIDC_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+        run: |
+          TOKEN=$(curl -fsS \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" \
+            | jq -r '.value')
+
+          echo "$TOKEN" | cut -d '.' -f 2 | \
+            base64 -d 2>/dev/null | \
+            jq '{iss, aud, sub, repository, ref, environment}'
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
